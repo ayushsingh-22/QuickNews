@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.quicknews.design.First_screen
 import com.example.quicknews.design.Login_screen
+import com.example.quicknews.design.Register_screen
 import com.example.quicknews.ui.theme.QuickNewsTheme
 
 class MainActivity : ComponentActivity() {
@@ -15,7 +16,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             QuickNewsTheme {
                 //First_screen()
-                Login_screen()
+                //Login_screen()
+                Register_screen()
             }
         }
     }

@@ -37,7 +37,7 @@ import com.example.quicknews.R
 import com.example.quicknews.data.calculateScreenSize
 
 @Composable
-fun Login_screen(modifier: Modifier = Modifier) {
+fun Register_screen(modifier: Modifier = Modifier) {
 
     val screenSize = calculateScreenSize()
     val screenWidth = screenSize.first.dp
@@ -45,6 +45,7 @@ fun Login_screen(modifier: Modifier = Modifier) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
 
     Card(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -59,23 +60,37 @@ fun Login_screen(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "Login",
-                    fontSize = 50.sp,
+                    text = "Sign Up",
+                    fontSize = 40.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF10a279),
                     modifier = Modifier
                         .padding(8.dp)
-                        .offset(x = screenWidth * 0.25f, y = 25.dp)
+                        .offset(x = screenWidth * 0.2f, y = 25.dp)
                 )
             }
 
-            Column(modifier = Modifier.offset(x = screenWidth * 0.07f, y = 25.dp)
+            Column(modifier = Modifier.offset(x = screenWidth * 0.07f, y = 20.dp)
                 .fillMaxWidth())
             {
+                Text(
+                    text = "Full Name",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                OutlinedTextField(
+                    value = name,
+                    singleLine = true,
+                    onValueChange = { name = it },
+                    label = { Text("Enter Name") },
+                    modifier = Modifier.size(screenWidth * 0.85f, 70.dp),
+                )
+
                 Text(text = "Email",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp))
+                    modifier = Modifier.padding(bottom = 8.dp, top = 15.dp))
                 OutlinedTextField(
                     value = email,
                     singleLine = true,
@@ -85,15 +100,7 @@ fun Login_screen(modifier: Modifier = Modifier) {
                         .clip(RectangleShape)
                         .size(screenWidth * 0.85f, 70.dp)
                 )
-            }
 
-            Spacer(modifier = Modifier.height(25.dp))
-
-            Column(
-                modifier = Modifier
-                    .offset(x = screenWidth * 0.07f, y = 25.dp)
-                    .fillMaxWidth()
-            ) {
                 Text(
                     text = "Password",
                     fontSize = 18.sp,
@@ -113,7 +120,7 @@ fun Login_screen(modifier: Modifier = Modifier) {
                 Text(
                     text = "Forgot Password?",
                     modifier = Modifier.clickable {
-                        // Handle click action here
+
                         println("Forgot Password clicked!")
                     },
                     fontSize = 16.sp,
@@ -123,19 +130,19 @@ fun Login_screen(modifier: Modifier = Modifier) {
                 Button(
                     onClick = { /* Handle click */ },
                     modifier = Modifier
-                        .offset( y = 25.dp)
+                        .offset( y = 20.dp)
                         .size(screenWidth * 0.85f, screenHeight * 0.06f),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xFF10a279))
                 ) {
-                    Text(text = "Login ",
+                    Text(text = "Register ",
                         fontSize = 25.sp)
                 }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.offset(-30.dp)
-                        .padding(horizontal = screenWidth * 0.1f, vertical = 50.dp,)
+                        .padding(horizontal = screenWidth * 0.1f, vertical = 30.dp,)
                 ) {
                     Divider(
                         thickness = 2.dp,
@@ -158,7 +165,7 @@ fun Login_screen(modifier: Modifier = Modifier) {
                 Button(
                     onClick = { /* Handle click */ },
                     modifier = Modifier
-                        .offset(y=-38.dp)
+                        .offset(y=-25.dp)
                         .size(screenWidth * 0.85f, screenHeight * 0.06f),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xFF10a279))
@@ -168,18 +175,16 @@ fun Login_screen(modifier: Modifier = Modifier) {
                 }
 
                 Text(
-                    text = "Don’t have an account?  Register",
+                    text = "Already have an account?  Log In ",
                     modifier = Modifier.clickable {
                         // Handle click action here
                         println("Don’t have an account?  Register")
                     }
-                        .offset(x = screenWidth * 0.1f, y = -8.dp),
+                        .offset(x = screenWidth * 0.1f, y = -18.dp),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
-
             }
-
         }
     }
 }
