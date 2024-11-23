@@ -143,10 +143,7 @@ fun Register_screen(navController: NavHostController, authViewModel: Authmodel) 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Button(
-                    onClick = {
-                        authViewModel.signup(email, password)
-
-                    },
+                    onClick = { authViewModel.signup(email, password) },
                     modifier = Modifier
                         .offset(y = 12.dp)
                         .size(screenWidth * 0.85f, screenHeight * 0.06f),

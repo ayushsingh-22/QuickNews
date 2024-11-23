@@ -20,11 +20,10 @@ fun navigation(modifier: Modifier = Modifier) {
 
     NavHost(navController = navcontrol, startDestination = "welcome_screen") {
 
-        composable("login") { Login_screen(navcontrol) }
+        composable("login") { Login_screen(navcontrol,authViewModel) }
         composable("register") { Register_screen(navcontrol, authViewModel) }
         composable("welcome_screen") { First_screen(navcontrol) }
         composable("home") { Home_screen(navcontrol,authViewModel) }
-
 
     }
 }

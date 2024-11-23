@@ -1,5 +1,6 @@
 package com.example.quicknews.design
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,7 +20,9 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -35,14 +39,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.quicknews.R
+import com.example.quicknews.data.AuthState
+import com.example.quicknews.data.Authmodel
 import com.example.quicknews.data.calculateScreenSize
 
 @Composable
-fun Login_screen(navController: NavHostController) {
+fun Login_screen(navController: NavHostController, authViewModel: Authmodel) {
 
     val screenSize = calculateScreenSize()
     val screenWidth = screenSize.first.dp
     val screenHeight = screenSize.second.dp
+    val context = LocalContext.current
+
+    val authState = authViewModel.authState.observeAsState()
+    LaunchedEffect(authState.value) {
+        when (authState.value) {
+            is AuthState.Authenticated -> {
+                navController.navigate("home")
+            }
+
+            is AuthState.Error -> Toast.makeText(
+                context, (authState.value as AuthState.Error).message,
+                Toast.LENGTH_SHORT
+            ).show()
+
+            else -> Unit
+        }
+    }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -116,7 +139,7 @@ fun Login_screen(navController: NavHostController) {
                 )
 
                 Button(
-                    onClick = { navController.navigate("home") },
+                    onClick = { authViewModel.signup(email, password) },
                     modifier = Modifier
                         .padding(top = 10.dp)
                         .size(screenWidth * 0.85f, screenHeight * 0.06f),
