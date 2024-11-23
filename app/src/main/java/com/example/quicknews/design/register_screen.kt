@@ -1,5 +1,6 @@
 package com.example.quicknews.design
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,7 +20,9 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,16 +31,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.quicknews.R
+import com.example.quicknews.data.AuthState
+import com.example.quicknews.data.Authmodel
 import com.example.quicknews.data.calculateScreenSize
 
 @Composable
-fun Register_screen(modifier: Modifier = Modifier) {
+fun Register_screen(navController: NavHostController, authViewModel: Authmodel) {
 
     val screenSize = calculateScreenSize()
     val screenWidth = screenSize.first.dp
@@ -46,6 +53,23 @@ fun Register_screen(modifier: Modifier = Modifier) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    val authState = authViewModel.authState.observeAsState()
+    LaunchedEffect(authState.value) {
+        when (authState.value) {
+            is AuthState.Authenticated -> {
+                navController.navigate("home")
+            }
+
+            is AuthState.Error -> Toast.makeText(
+                context, (authState.value as AuthState.Error).message,
+                Toast.LENGTH_SHORT
+            ).show()
+
+            else -> Unit
+        }
+    }
 
     Card(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -57,6 +81,7 @@ fun Register_screen(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .size(screenWidth * 0.08f, screenHeight * 0.1f)
                         .offset(x = 15.dp, y = 22.dp)
+                        .clickable { navController.navigate("welcome_screen") }
                 )
 
                 Text(
@@ -70,14 +95,14 @@ fun Register_screen(modifier: Modifier = Modifier) {
                 )
             }
 
-            Column(modifier = Modifier.offset(x = screenWidth * 0.07f, y = 20.dp)
+            Column(modifier = Modifier
+                .offset(x = screenWidth * 0.07f, y = 20.dp)
                 .fillMaxWidth())
             {
                 Text(
                     text = "Full Name",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
                 )
                 OutlinedTextField(
                     value = name,
@@ -90,7 +115,7 @@ fun Register_screen(modifier: Modifier = Modifier) {
                 Text(text = "Email",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp, top = 15.dp))
+                    modifier = Modifier.padding(top = 10.dp))
                 OutlinedTextField(
                     value = email,
                     singleLine = true,
@@ -105,7 +130,7 @@ fun Register_screen(modifier: Modifier = Modifier) {
                     text = "Password",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(top = 10.dp)
                 )
                 OutlinedTextField(
                     value = password,
@@ -115,34 +140,30 @@ fun Register_screen(modifier: Modifier = Modifier) {
                     modifier = Modifier.size(screenWidth * 0.85f, 70.dp),
                     visualTransformation = PasswordVisualTransformation()
                 )
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Text(
-                    text = "Forgot Password?",
-                    modifier = Modifier.clickable {
-
-                        println("Forgot Password clicked!")
-                    },
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Button(
-                    onClick = { /* Handle click */ },
+                    onClick = {
+                        authViewModel.signup(email, password)
+
+                    },
                     modifier = Modifier
-                        .offset( y = 20.dp)
+                        .offset(y = 12.dp)
                         .size(screenWidth * 0.85f, screenHeight * 0.06f),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xFF10a279))
                 ) {
-                    Text(text = "Register ",
-                        fontSize = 25.sp)
+                    Text(
+                        text = "Register",
+                        fontSize = 25.sp
+                    )
                 }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.offset(-30.dp)
-                        .padding(horizontal = screenWidth * 0.1f, vertical = 30.dp,)
+                    modifier = Modifier
+                        .offset(x = -30.dp, y = -5.dp)
+                        .padding(horizontal = screenWidth * 0.1f, vertical = 25.dp,)
                 ) {
                     Divider(
                         thickness = 2.dp,
@@ -158,14 +179,13 @@ fun Register_screen(modifier: Modifier = Modifier) {
                         thickness = 2.dp,
                         modifier = Modifier
                             .weight(1f)
-
                     )
                 }
 
                 Button(
                     onClick = { /* Handle click */ },
                     modifier = Modifier
-                        .offset(y=-25.dp)
+                        .offset(y = -25.dp)
                         .size(screenWidth * 0.85f, screenHeight * 0.06f),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xFF10a279))
@@ -176,11 +196,11 @@ fun Register_screen(modifier: Modifier = Modifier) {
 
                 Text(
                     text = "Already have an account?  Log In ",
-                    modifier = Modifier.clickable {
-                        // Handle click action here
-                        println("Don’t have an account?  Register")
-                    }
-                        .offset(x = screenWidth * 0.1f, y = -18.dp),
+                    modifier = Modifier
+                        .offset(10.dp, -10.dp)
+                        .clickable {
+                            navController.navigate("login")
+                        },
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )

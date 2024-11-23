@@ -33,11 +33,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.quicknews.R
 import com.example.quicknews.data.calculateScreenSize
 
 @Composable
-fun Login_screen(modifier: Modifier = Modifier) {
+fun Login_screen(navController: NavHostController) {
 
     val screenSize = calculateScreenSize()
     val screenWidth = screenSize.first.dp
@@ -56,6 +57,7 @@ fun Login_screen(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .size(screenWidth * 0.08f, screenHeight * 0.1f)
                         .offset(x = 15.dp, y = 22.dp)
+                        .clickable { navController.navigate("welcome_screen") }
                 )
 
                 Text(
@@ -69,13 +71,14 @@ fun Login_screen(modifier: Modifier = Modifier) {
                 )
             }
 
-            Column(modifier = Modifier.offset(x = screenWidth * 0.07f, y = 25.dp)
+            Column(modifier = Modifier.offset(x = screenWidth * 0.07f,y=20.dp)
                 .fillMaxWidth())
             {
-                Text(text = "Email",
+                Text(
+                    text = "Email",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp))
+                )
                 OutlinedTextField(
                     value = email,
                     singleLine = true,
@@ -85,20 +88,12 @@ fun Login_screen(modifier: Modifier = Modifier) {
                         .clip(RectangleShape)
                         .size(screenWidth * 0.85f, 70.dp)
                 )
-            }
 
-            Spacer(modifier = Modifier.height(25.dp))
-
-            Column(
-                modifier = Modifier
-                    .offset(x = screenWidth * 0.07f, y = 25.dp)
-                    .fillMaxWidth()
-            ) {
                 Text(
                     text = "Password",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(top = 10.dp)
                 )
                 OutlinedTextField(
                     value = password,
@@ -108,12 +103,12 @@ fun Login_screen(modifier: Modifier = Modifier) {
                     modifier = Modifier.size(screenWidth * 0.85f, 70.dp),
                     visualTransformation = PasswordVisualTransformation()
                 )
-                Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
                     text = "Forgot Password?",
-                    modifier = Modifier.clickable {
-                        // Handle click action here
+                    modifier = Modifier.padding(top = 10.dp)
+                        .clickable {
+
                         println("Forgot Password clicked!")
                     },
                     fontSize = 16.sp,
@@ -121,21 +116,23 @@ fun Login_screen(modifier: Modifier = Modifier) {
                 )
 
                 Button(
-                    onClick = { /* Handle click */ },
+                    onClick = { navController.navigate("home") },
                     modifier = Modifier
-                        .offset( y = 25.dp)
+                        .padding(top = 10.dp)
                         .size(screenWidth * 0.85f, screenHeight * 0.06f),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xFF10a279))
                 ) {
-                    Text(text = "Login ",
-                        fontSize = 25.sp)
+                    Text(
+                        text = "Login ",
+                        fontSize = 25.sp
+                    )
                 }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.offset(-30.dp)
-                        .padding(horizontal = screenWidth * 0.1f, vertical = 50.dp,)
+                    modifier = Modifier.offset(x=-30.dp, y = -10.dp)
+                        .padding(horizontal = screenWidth * 0.1f, vertical = 25.dp,)
                 ) {
                     Divider(
                         thickness = 2.dp,
@@ -151,35 +148,33 @@ fun Login_screen(modifier: Modifier = Modifier) {
                         thickness = 2.dp,
                         modifier = Modifier
                             .weight(1f)
-
                     )
                 }
 
                 Button(
                     onClick = { /* Handle click */ },
                     modifier = Modifier
-                        .offset(y=-38.dp)
+                        .offset(y = -25.dp)
                         .size(screenWidth * 0.85f, screenHeight * 0.06f),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xFF10a279))
                 ) {
-                    Text(text = "Continue with Google ",
-                        fontSize = 25.sp)
+                    Text(
+                        text = "Continue with Google ",
+                        fontSize = 25.sp
+                    )
                 }
 
                 Text(
                     text = "Don’t have an account?  Register",
-                    modifier = Modifier.clickable {
-                        // Handle click action here
-                        println("Don’t have an account?  Register")
-                    }
-                        .offset(x = screenWidth * 0.1f, y = -8.dp),
+                    modifier = Modifier.offset(10.dp,-10.dp)
+                        .clickable {navController.navigate("register")},
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
+            }
 
             }
 
         }
     }
-}

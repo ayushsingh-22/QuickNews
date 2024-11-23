@@ -27,12 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.quicknews.R
 import com.example.quicknews.data.calculateScreenSize
 import kotlinx.coroutines.delay
 
 @Composable
-fun First_screen() {
+fun First_screen(navHostController: NavHostController) {
 
     val screenSize = calculateScreenSize()
     val screenWidth = screenSize.first.dp
@@ -42,74 +43,69 @@ fun First_screen() {
         .fillMaxSize()
         .offset(x = 40.dp, y = 15.dp)
     ) {
-
         Image(
             painter = painterResource(id = R.drawable.app_logo),
             contentDescription = "App Logo",
             modifier = Modifier
                 .size(screenWidth * 0.8f, screenHeight * 0.4f)
-                .offset(x = 10.dp),
+                .offset(x = 7.dp),
         )
 
-        Spacer(modifier = Modifier.height(35.dp))
+        Spacer(modifier = Modifier.height(25.dp))
         Button(
-            onClick = { /* Handle click */ },
+            onClick = { navHostController.navigate("login") },
             modifier = Modifier
-                .size(screenWidth * 0.95f, screenHeight * 0.06f)
-                .offset(x = -(screenWidth * 0.07f)),
+                .size(screenWidth * 0.9f, screenHeight * 0.06f)
+                .offset(x = -(screenWidth * 0.03f)),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(Color(0xFF10a279))
         ) {
-            Text(text = "Sign In",
+            Text(text = "Login",
                fontSize = 25.sp)
-
         }
 
         HorizontalDivider(modifier = Modifier
             .height(25.dp)
             .size(screenWidth * 0.85f)
             .offset(x = 0.dp, y = 10.dp),
-            thickness = 2.dp,
-            color = Color.Black,)
+            thickness = 2.dp,)
 
         Button(
-            onClick = { /* Handle click */ },
+            onClick = { navHostController.navigate("register") },
             modifier = Modifier
-                .size(screenWidth * 0.95f, screenHeight * 0.06f)
-                .offset(x = -(screenWidth * 0.07f)),
+                .size(screenWidth * 0.9f, screenHeight * 0.06f)
+                .offset(x = -(screenWidth * 0.03f)),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(Color(0xFF10a279))
         ) {
             Text(text = "Register",
                 fontSize = 25.sp)
-
         }
 
-        var offsetY by remember { mutableStateOf(300.dp) } // Initial offset outside the screen
+        var offsetY by remember { mutableStateOf(300.dp) }
         val animatedOffsetY by animateDpAsState(
             targetValue = offsetY,
             animationSpec = tween(durationMillis = 1000)
         )
 
         LaunchedEffect(Unit) {
-            delay(500) // Optional delay before animation starts
-            offsetY = 50.dp // Bring the text into view
+            delay(500)
+            offsetY = 50.dp
         }
 
         Box(
             modifier = Modifier
-                .fillMaxSize() // Fill the screen
+                .fillMaxSize()
         ) {
             Text(
                 text = "Developed by AYUSH",
                 modifier = Modifier
-                    .align(Alignment.BottomCenter) // Align at the bottom-center
+                    .align(Alignment.BottomCenter)
                     .offset(
                         x = (-50).dp,
                         y = animatedOffsetY - 100.dp
-                    ), // Apply animated vertical offset
+                    ),
                 fontSize = 16.sp,
-                color = Color.Gray
             )
         }
 

@@ -4,10 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.NavController
 import com.example.quicknews.design.First_screen
 import com.example.quicknews.design.Login_screen
 import com.example.quicknews.design.Register_screen
 import com.example.quicknews.ui.theme.QuickNewsTheme
+import navigation.navigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,8 +18,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             QuickNewsTheme {
                 //First_screen()
-                //Login_screen()
-                Register_screen()
+                navigation()
             }
         }
     }
