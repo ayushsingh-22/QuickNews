@@ -62,7 +62,6 @@ fun Login_screen(navController: NavHostController, authViewModel: Authmodel) {
                 context, (authState.value as AuthState.Error).message,
                 Toast.LENGTH_SHORT
             ).show()
-
             else -> Unit
         }
     }
@@ -139,7 +138,7 @@ fun Login_screen(navController: NavHostController, authViewModel: Authmodel) {
                 )
 
                 Button(
-                    onClick = { authViewModel.signup(email, password) },
+                    onClick = { authViewModel.login(email, password) },
                     modifier = Modifier
                         .padding(top = 10.dp)
                         .size(screenWidth * 0.85f, screenHeight * 0.06f),

@@ -18,7 +18,7 @@ fun navigation(modifier: Modifier = Modifier) {
     val navcontrol = rememberNavController()
     val authViewModel: Authmodel = viewModel()
 
-    NavHost(navController = navcontrol, startDestination = "welcome_screen") {
+    NavHost(navController = navcontrol, startDestination = "home") {
 
         composable("login") { Login_screen(navcontrol,authViewModel) }
         composable("register") { Register_screen(navcontrol, authViewModel) }

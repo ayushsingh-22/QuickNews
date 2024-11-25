@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +40,7 @@ fun First_screen(navHostController: NavHostController) {
     val screenWidth = screenSize.first.dp
     val screenHeight = screenSize.second.dp
 
+    Card {
     Column(modifier = Modifier
         .fillMaxSize()
         .offset(x = 40.dp, y = 15.dp)
@@ -60,15 +62,19 @@ fun First_screen(navHostController: NavHostController) {
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(Color(0xFF10a279))
         ) {
-            Text(text = "Login",
-               fontSize = 25.sp)
+            Text(
+                text = "Login",
+                fontSize = 25.sp
+            )
         }
 
-        HorizontalDivider(modifier = Modifier
-            .height(25.dp)
-            .size(screenWidth * 0.85f)
-            .offset(x = 0.dp, y = 10.dp),
-            thickness = 2.dp,)
+        HorizontalDivider(
+            modifier = Modifier
+                .height(25.dp)
+                .size(screenWidth * 0.85f)
+                .offset(x = 0.dp, y = 10.dp),
+            thickness = 2.dp,
+        )
 
         Button(
             onClick = { navHostController.navigate("register") },
@@ -78,8 +84,10 @@ fun First_screen(navHostController: NavHostController) {
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(Color(0xFF10a279))
         ) {
-            Text(text = "Register",
-                fontSize = 25.sp)
+            Text(
+                text = "Register",
+                fontSize = 25.sp
+            )
         }
 
         var offsetY by remember { mutableStateOf(300.dp) }
@@ -109,5 +117,6 @@ fun First_screen(navHostController: NavHostController) {
             )
         }
 
+    }
     }
 }
