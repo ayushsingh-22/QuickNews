@@ -2,7 +2,10 @@ package com.example.quicknews.design
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,18 +44,25 @@ fun First_screen(navHostController: NavHostController) {
     val screenWidth = screenSize.first.dp
     val screenHeight = screenSize.second.dp
 
-    Card {
+    Card(modifier = Modifier.fillMaxSize(),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
     Column(modifier = Modifier
         .fillMaxSize()
-        .offset(x = 40.dp, y = 15.dp)
+        .offset(x = 31.dp, y = 28.dp)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.app_logo),
-            contentDescription = "App Logo",
+        Box(
             modifier = Modifier
                 .size(screenWidth * 0.8f, screenHeight * 0.4f)
-                .offset(x = 7.dp),
-        )
+                .offset(x = 7.dp)
+                .border(width = 2.dp, color = Color.Black, shape = RoundedCornerShape(18.dp))
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.app_logo),
+                contentDescription = "App Logo",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
 
         Spacer(modifier = Modifier.height(25.dp))
         Button(

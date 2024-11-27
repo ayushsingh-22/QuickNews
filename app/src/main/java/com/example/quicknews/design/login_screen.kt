@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -55,7 +56,7 @@ fun Login_screen(navController: NavHostController, authViewModel: Authmodel) {
     LaunchedEffect(authState.value) {
         when (authState.value) {
             is AuthState.Authenticated -> {
-                navController.navigate("home")
+                navController.navigate("home_screen")
             }
 
             is AuthState.Error -> Toast.makeText(
@@ -69,7 +70,8 @@ fun Login_screen(navController: NavHostController, authViewModel: Authmodel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    Card(modifier = Modifier.fillMaxSize()) {
+    Card(modifier = Modifier.fillMaxSize(),
+        colors = CardDefaults.cardColors(containerColor = Color.White)) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row {
 
@@ -106,6 +108,7 @@ fun Login_screen(navController: NavHostController, authViewModel: Authmodel) {
                     singleLine = true,
                     onValueChange = { email = it },
                     label = { Text("Enter Email") },
+
                     modifier = Modifier
                         .clip(RectangleShape)
                         .size(screenWidth * 0.85f, 70.dp)
