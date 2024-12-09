@@ -1,7 +1,7 @@
 package api
 
 import data.NewsResponse
-import data.constant_value
+import data.paperNewsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -17,5 +17,12 @@ interface ApiService {
         @Query("date") date: String
     ): Response<NewsResponse>
 
+    @GET("retrieve-front-page")
+    suspend fun getFrontPageNews(
+        @Header("X-Api-Key") apiKey: String,
+        @Query("source-country") sourceCountry: String,
+        @Query("date") date: String,
+        @Query("source-name") sourceName: String
 
+        ): paperNewsResponse
 }

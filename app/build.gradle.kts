@@ -77,6 +77,7 @@ dependencies {
         // Coroutines
         implementation (libs.kotlinx.coroutines.android.v164)
         implementation (libs.androidx.lifecycle.viewmodel.ktx.v261)
+
     }
 
 }

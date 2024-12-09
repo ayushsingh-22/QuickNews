@@ -25,3 +25,16 @@ data class News(
     val author: String?,
     val authors: List<String>
 )
+
+data class paperNewsResponse(
+    val front_page: FrontPage
+)
+
+// Data class for the 'front_page' field
+data class FrontPage(
+    val name: String,
+    val date: String,
+    val language: String,
+    val country: String,
+    val image: String
+)
