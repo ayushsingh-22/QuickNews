@@ -1,5 +1,6 @@
 package api
 
+import com.example.news.network.ApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

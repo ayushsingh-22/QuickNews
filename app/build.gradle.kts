@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,6 +78,9 @@ dependencies {
         // Coroutines
         implementation (libs.kotlinx.coroutines.android.v164)
         implementation (libs.androidx.lifecycle.viewmodel.ktx.v261)
+
+        implementation (libs.androidx.datastore.preferences)
+
 
     }
 

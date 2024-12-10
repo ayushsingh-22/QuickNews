@@ -1,17 +1,29 @@
-package com.example.news.viewModel
-
+import android.app.Application
+import android.content.Context
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import data.News
-import data.NewsResponse
-import data.paperNewsResponse
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import data.breakingNewsDataClass.News
+import data.breakingNewsDataClass.NewsResponse
+import data.detailNewsDataClass.DetailNews
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import repository.NewsRepository
-import repository.PaperNewsRepository
+import repository.BreakingNewsRespository
+import repository.DetailNewsRepository
 
-class NewsViewModel : ViewModel() {
+private val Context.dataStore by preferencesDataStore(name = "NewsCache")
+
+class NewsViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val context by lazy { application.applicationContext } // use the application context
 
     private val _newsList = MutableStateFlow<List<News>>(emptyList())
     val newsList: StateFlow<List<News>> = _newsList
@@ -19,57 +31,66 @@ class NewsViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    private var isDataLoaded = false // Flag to track if data is already fetched
-
+    private val newsKey = stringPreferencesKey("CurrentTopNewsData")
 
     fun getTopNews(country: String, language: String, date: String) {
-        if (isDataLoaded) return // Prevent API call if data is already loaded
-
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val response = NewsRepository().fetchTopNews(country, language, date)
+                // Step 1: Load cached data from DataStore
+                val cachedDataJson = context.dataStore.data.first()[newsKey]
+                if (!cachedDataJson.isNullOrEmpty()) {
+                    val cachedDataType = object : TypeToken<List<News>>() {}.type
+                    val cachedNewsList: List<News> = Gson().fromJson(cachedDataJson, cachedDataType)
+                    _newsList.value = cachedNewsList
+                }
+
+                // Step 2: Fetch fresh data from API
+                val response = BreakingNewsRespository().fetchTopNews(country, language, date)
                 if (response.isSuccessful) {
                     response.body()?.let { newsResponse: NewsResponse ->
-                        _newsList.value = newsResponse.top_news.flatMap { it.news }
+                        val latestNews = newsResponse.top_news.flatMap { it.news }
+                        _newsList.value = latestNews
+
+                        // Step 3: Cache the latest data in DataStore
+                        context.dataStore.edit { preferences ->
+                            preferences[newsKey] = Gson().toJson(latestNews)
+                        }
                     }
-                    isDataLoaded = true // Mark data as loaded
                 }
             } catch (e: Exception) {
-                e.printStackTrace() // Handle the exception as needed
+                e.printStackTrace() // Handle exception properly (e.g., logging or user feedback)
             } finally {
                 _isLoading.value = false
             }
         }
     }
-
-    fun refreshData(country: String, language: String, date: String) {
-        isDataLoaded = false // Reset the flag
-        getTopNews(country, language, date) // Fetch fresh data
-    }
 }
 
 
-class PaperNewsViewModel : ViewModel() {
+class DetailNewsViewModel(private val repository: DetailNewsRepository) : ViewModel() {
 
-    private val _newsData = MutableStateFlow<paperNewsResponse?>(null)
-    val newsData: StateFlow<paperNewsResponse?> = _newsData
+    private val _newsData = MutableStateFlow<DetailNews?>(null)
+    val newsData: StateFlow<DetailNews?> = _newsData
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    fun fetchFrontPageNews(sourceCountry: String, date: String, sourceName: String) {
+    fun getDetailNews(url: String) {
         viewModelScope.launch {
-            _isLoading.value = true
             try {
-                val response = PaperNewsRepository().getFrontPageNews (sourceCountry, date, sourceName)
-                _newsData.value = response
-                println("Ayush paper " + sourceName)
+                val news = repository.fetchDetailNews(url)
+                _newsData.value = news
             } catch (e: Exception) {
-                e.printStackTrace() // Handle error properly
-            } finally {
-                _isLoading.value = false
+                e.printStackTrace()
             }
         }
     }
 }
+
+class DetailNewsViewModelFactory(private val repository: DetailNewsRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(DetailNewsViewModel::class.java)) {
+            return DetailNewsViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+

@@ -1,7 +1,7 @@
-package api
+package com.example.news.network
 
-import data.NewsResponse
-import data.paperNewsResponse
+import data.breakingNewsDataClass.NewsResponse
+import data.detailNewsDataClass.DetailNews
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -17,12 +17,10 @@ interface ApiService {
         @Query("date") date: String
     ): Response<NewsResponse>
 
-    @GET("retrieve-front-page")
-    suspend fun getFrontPageNews(
+    @GET("extract-news")
+    suspend fun getDetailNews(
         @Header("X-Api-Key") apiKey: String,
-        @Query("source-country") sourceCountry: String,
-        @Query("date") date: String,
-        @Query("source-name") sourceName: String
-
-        ): paperNewsResponse
+        @Query("url") url: String
+    ): DetailNews
 }
+

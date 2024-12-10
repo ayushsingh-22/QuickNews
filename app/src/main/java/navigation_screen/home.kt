@@ -1,7 +1,6 @@
 package navigation_screen
 
-import android.content.Intent
-import android.net.Uri
+import NewsViewModel
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,32 +47,26 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.news.R
 import com.example.news.ui.theme.nunito
-import data.FrontPage
-import data.News
-import com.example.news.viewModel.NewsViewModel
-import com.example.news.viewModel.PaperNewsViewModel
+import data.breakingNewsDataClass.News
+import data.getCurrentUTCDate
 
 @Composable
 fun home_screen(
     navController: NavController,
     newsViewModel: NewsViewModel = viewModel(),
-    paperViewModel: PaperNewsViewModel = viewModel()
 ) {
     val context = LocalContext.current
 
     var text by remember { mutableStateOf("") }
+    var date = getCurrentUTCDate()
 
     // Observe the ViewModel states
     val newsList by newsViewModel.newsList.collectAsState()
     val isLoading by newsViewModel.isLoading.collectAsState()
 
-    val frontPageNews by paperViewModel.newsData.collectAsState()
-    val isFrontPageLoading by paperViewModel.isLoading.collectAsState()
-
      //Trigger API calls when the screen is loaded
     LaunchedEffect(Unit) {
-       //newsViewModel.getTopNews("in", "en", "2024-12-07", )
-        //paperViewModel.fetchFrontPageNews("in", "2024-12-05", "herald-sun", )
+       newsViewModel.getTopNews("in", "en", date, )
     }
 
     Column(
@@ -131,7 +123,7 @@ fun home_screen(
                 contentDescription = "notification",
                 modifier = Modifier
                     .offset(y = 15.dp)
-                    .size(40.dp)
+                    .size(45.dp)
                     .clickable {
                         Toast
                             .makeText(context, "Notification Screen", Toast.LENGTH_SHORT)
@@ -181,7 +173,7 @@ fun home_screen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(newsList.take(4)) { news ->
-                        NewsCard(news, context)
+                        NewsCard(news, navController)
                     }
                 }
             }
@@ -216,110 +208,52 @@ fun home_screen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Front Page News
-        Box(contentAlignment = Alignment.Center) {
-            if (isFrontPageLoading) {
-                CircularProgressIndicator(color = Color.Red, strokeWidth = 4.dp)
-            } else {
-                frontPageNews?.let { paperNewsResponse ->
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(listOf(paperNewsResponse.front_page)) { frontPage ->
-                            FrontPageCard(frontPage, context)
-                        }
-                    }
-                }
-            }
-        }
-
     }
 }
 
 @Composable
-fun FrontPageCard(paper: FrontPage, context: android.content.Context) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable {
-                Toast
-                    .makeText(context, "Front Page", Toast.LENGTH_SHORT)
-                    .show()
-            }
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            // Image from the API
-            AsyncImage(
-                model = paper.image, // URL of the image from the API
-                contentDescription = "Front Page Image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp) // Adjust height as needed
-                    .clip(RoundedCornerShape(8.dp)), // Optional: Rounded corners
-                contentScale = ContentScale.Fit // Adjust scaling (e.g., Crop, Fit)
-            )
-        }
-    }
-}
+fun NewsCard(news: News, navController: NavController) {
+    val encodedUrl = java.net.URLEncoder.encode(news.url, "UTF-8")
 
-@Composable
-fun NewsCard(news: News, context: android.content.Context) {
     Card(
         modifier = Modifier
-            .width(200.dp) // Fixed width for consistent sizing
+            .width(200.dp)
             .padding(8.dp)
             .clickable {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(news.url))
-                context.startActivity(browserIntent)
+                navController.navigate("detail_news?newsUrl=$encodedUrl")
             },
         shape = RoundedCornerShape(8.dp),
-
-        ) {
+    ) {
         Box(
             modifier = Modifier
-                .height(240.dp) // Fixed height for the card
+                .height(240.dp)
                 .fillMaxWidth()
         ) {
-            // Image with scrolling for overflow
-            Box(
+            AsyncImage(
+                model = news.image,
+                contentDescription = "News Image",
                 modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-                    .background(Color.LightGray)
-            ) {
-                AsyncImage(
-                    model = news.image, // URL of the image from the API
-                    contentDescription = "News Image",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp) // Fixed size container
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop // Fit image to container, cropping excess
-                )
-            }
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentScale = ContentScale.Crop
+            )
 
-            // Title overlay on the image
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .fillMaxWidth()
-                    .background(Color.Black.copy(alpha = 0.6f)) // Semi-transparent background
+                    .background(Color.Black.copy(alpha = 0.6f))
                     .padding(8.dp)
             ) {
                 Text(
                     text = news.title,
-                    fontFamily = nunito,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
                     color = Color.White,
-                    maxLines = 2 // Restrict title to 2 lines
+                    maxLines = 2
                 )
             }
         }
     }
 }
+

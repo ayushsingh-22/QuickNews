@@ -1,7 +1,6 @@
 package navigation_screen
 
-import android.content.Intent
-import android.net.Uri
+import NewsViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -46,8 +45,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.news.R
 import com.example.news.ui.theme.nunito
-import data.News
-import com.example.news.viewModel.NewsViewModel
+import data.breakingNewsDataClass.News
+import data.getCurrentUTCDate
 
 @Composable
 fun BrakingNews_Screen(
@@ -55,12 +54,13 @@ fun BrakingNews_Screen(
     newsViewModel: NewsViewModel = viewModel(),
 ) {
 
-    var context = LocalContext.current
+    var date = getCurrentUTCDate()
+
     val newsList by newsViewModel.newsList.collectAsState()
     val isLoading by newsViewModel.isLoading.collectAsState()
 
     LaunchedEffect(Unit) {
-        //newsViewModel.getTopNews("in", "en", "2024-12-07", )
+        newsViewModel.getTopNews("in", "en", date, )
     }
 
     Column(
@@ -110,7 +110,7 @@ fun BrakingNews_Screen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(newsList) { news ->
-                            BreakingNewsCard(news, context)
+                            BreakingNewsCard(news, navController)
                         }
                     }
                 }
@@ -121,14 +121,15 @@ fun BrakingNews_Screen(
 
 
 @Composable
-fun BreakingNewsCard(news: News, context: android.content.Context) {
+fun BreakingNewsCard(news: News, navController: NavController) {
+
+    val encodedUrl = java.net.URLEncoder.encode(news.url, "UTF-8")
     Card(
         modifier = Modifier
             .fillMaxWidth() // Each card takes full width
             .padding(8.dp)
             .clickable {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(news.url))
-                context.startActivity(browserIntent)
+                navController.navigate("detail_news?newsUrl=$encodedUrl")
             },
         shape = RoundedCornerShape(8.dp)
     ) {
