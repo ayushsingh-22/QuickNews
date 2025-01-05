@@ -21,8 +21,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -64,9 +67,9 @@ fun home_screen(
     val newsList by newsViewModel.newsList.collectAsState()
     val isLoading by newsViewModel.isLoading.collectAsState()
 
-     //Trigger API calls when the screen is loaded
+    //Trigger API calls when the screen is loaded
     LaunchedEffect(Unit) {
-       newsViewModel.getTopNews("in", "en", date, )
+         newsViewModel.getTopNews("in", "en", date, )
     }
 
     Column(
@@ -77,12 +80,9 @@ fun home_screen(
     ) {
         // Header Row
         Row(
-            modifier = Modifier
-                .offset(y = (24).dp),
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier.offset(y = (24).dp), horizontalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
+            Image(painter = painterResource(id = R.drawable.logo),
                 contentDescription = "logo",
                 modifier = Modifier
                     .offset(y = (-15).dp)
@@ -91,45 +91,50 @@ fun home_screen(
                         Toast
                             .makeText(context, "Notification Screen", Toast.LENGTH_SHORT)
                             .show()
-                    }
-            )
+                    })
             Spacer(modifier = Modifier.width(25.dp))
             Text(
                 text = "Quick News",
                 fontFamily = nunito,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 35.sp,
-                modifier = Modifier
-                    .offset(y = (-8).dp)
+                modifier = Modifier.offset(y = (-8).dp)
             )
         }
 
         // Search Row
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-
+            modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedTextField(
                 value = text,
                 singleLine = true,
                 onValueChange = { text = it },
-                label = { Text("Search") },
-                modifier = Modifier.weight(22f)
+                placeholder = { Text("Search") },
+                modifier = Modifier.weight(22f),
+                trailingIcon = {
+                    if (text.isNotEmpty()) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear Icon",
+                            modifier = Modifier.clickable {
+                                text = ""
+                            }
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Icon",
+                            modifier = Modifier.clickable {
+                                if (text.isNotBlank()) {
+                                   Toast.makeText(context, "Search Button", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        )
+                    }
+                }
             )
             Spacer(modifier = Modifier.width(10.dp))
-            Image(
-                painter = painterResource(id = R.drawable.notification),
-                contentDescription = "notification",
-                modifier = Modifier
-                    .offset(y = 15.dp)
-                    .size(45.dp)
-                    .clickable {
-                        Toast
-                            .makeText(context, "Notification Screen", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -147,8 +152,7 @@ fun home_screen(
 
             Spacer(modifier = Modifier.weight(12f))
 
-            Image(
-                painter = painterResource(id = R.drawable.right_arrow),
+            Image(painter = painterResource(id = R.drawable.right_arrow),
                 contentDescription = "next screen",
                 modifier = Modifier
                     .size(36.dp)
@@ -157,8 +161,7 @@ fun home_screen(
                             .makeText(context, "Breaking News Tab", Toast.LENGTH_SHORT)
                             .show()
                         navController.navigate("breaking_news")
-                    }
-            )
+                    })
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -178,36 +181,6 @@ fun home_screen(
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Newspaper Section
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Front Page",
-                fontFamily = nunito,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 30.sp
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Image(
-                painter = painterResource(id = R.drawable.right_arrow),
-                contentDescription = "next screen",
-                modifier = Modifier
-                    .size(36.dp)
-                    .clickable {
-                        Toast
-                            .makeText(context, "Newspaper Page Tab", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
     }
 }
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.news.network.ApiService
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import data.breakingNewsDataClass.News
@@ -14,6 +15,7 @@ import data.breakingNewsDataClass.NewsResponse
 import data.detailNewsDataClass.DetailNews
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import repository.BreakingNewsRespository
@@ -63,9 +65,12 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
             } finally {
                 _isLoading.value = false
             }
+
+
         }
     }
 }
+
 
 
 class DetailNewsViewModel(private val repository: DetailNewsRepository) : ViewModel() {

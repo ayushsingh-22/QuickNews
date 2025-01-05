@@ -23,6 +23,6 @@ class DetailNewsRepository {
     private val apiService = ApiClient.apiService
 
     suspend fun fetchDetailNews(url: String): DetailNews {
-        return apiService.getDetailNews(constant_value.api1,url)
+        return apiService.getDetailNews(constant_value.api2,url)
     }
 }

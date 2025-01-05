@@ -19,7 +19,7 @@ fun navigation() {
     val navController = rememberNavController()
     val newsViewModel: NewsViewModel = viewModel()
 
-    NavHost(navController = navController, startDestination = "breaking_news") {
+    NavHost(navController = navController, startDestination = "home") {
         composable("home") { home_screen(navController) }
         composable("notification") { notification_screen(navController) }
         composable("search") { search_screen(navController) }
@@ -33,5 +33,6 @@ fun navigation() {
         }
     }
 }
+
 
 

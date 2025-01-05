@@ -5,11 +5,18 @@ import DetailNewsViewModelFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,7 +41,6 @@ import repository.DetailNewsRepository
 
 @Composable
 fun DetailNewsScreen(newsUrl: String) {
-
     val context = LocalContext.current
     val repository = DetailNewsRepository()
     val viewModelFactory = DetailNewsViewModelFactory(repository)
@@ -45,97 +51,98 @@ fun DetailNewsScreen(newsUrl: String) {
         newsDetailsViewModel.getDetailNews(newsUrl)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        // Header Row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "logo",
-                modifier = Modifier
-                    .size(85.dp)
-                    .offset(10.dp)
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Image(
-                painter = painterResource(id = R.drawable.share_button),
-                contentDescription = "shareButton",
-                modifier = Modifier
-                    .size(40.dp)
-                    .offset(x = -22.dp, y = 32.dp)
-                    .clickable {
-                        shareContent(context, newsUrl) // Call the share function when clicked
-                    }
-            )
-        }
-
-        // Main Content
-        Box(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            if (newsDetails == null) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
+            // Header Row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "logo",
+                    modifier = Modifier
+                        .size(85.dp)
+                        .offset(10.dp)
                 )
-            } else {
-                newsDetails?.let { detailNews ->
-                    // Scrollable Content
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState()) // Make the content scrollable
-                            .padding(16.dp)
-                    ) {
-                        // Title
-                        Text(
-                            text = detailNews.title ?: "No Title Available",
-                            fontFamily = nunito,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp,
-                            textAlign = TextAlign.Justify
-                        )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
-                        // Image
-                        if (detailNews.image.isNotEmpty()) {
-                            AsyncImage(
-                                model = detailNews.image,
-                                contentDescription = "News Image",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp)
-                                    .padding(bottom = 16.dp),
-                                contentScale = ContentScale.Crop
+                Image(
+                    painter = painterResource(id = R.drawable.share_button),
+                    contentDescription = "shareButton",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .offset(x = -22.dp, y = 32.dp)
+                        .clickable {
+                            shareContent(context, newsUrl)
+                        }
+                )
+            }
+
+            // Main Content
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
+                if (newsDetails == null) {
+                    androidx.compose.material3.CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                } else {
+                    newsDetails?.let { detailNews ->
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(16.dp)
+                        ) {
+                            // Title
+                            Text(
+                                text = detailNews.title ?: "No Title Available",
+                                fontFamily = nunito,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp,
+                                textAlign = TextAlign.Justify
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // Image
+                            if (detailNews.image.isNotEmpty()) {
+                                AsyncImage(
+                                    model = detailNews.image,
+                                    contentDescription = "News Image",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp)
+                                        .padding(bottom = 16.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // Content
+                            Text(
+                                text = detailNews.text.ifEmpty { "No Content Available" },
+                                fontFamily = nunito,
+                                fontSize = 18.sp,
+                                color = Color.Black,
+                                textAlign = TextAlign.Justify,
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Content (Text)
-                        Text(
-                            text = detailNews.text.ifEmpty { "No Content Available" }, // Handle empty text
-                            fontFamily = nunito,
-                            fontSize = 18.sp,
-                            color = Color.Black,
-                            textAlign = TextAlign.Justify,
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
-
                 }
             }
         }
     }
 }
+
